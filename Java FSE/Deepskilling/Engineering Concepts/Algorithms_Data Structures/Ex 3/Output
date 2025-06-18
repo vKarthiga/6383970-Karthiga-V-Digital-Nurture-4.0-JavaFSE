@@ -1,0 +1,17 @@
+🟡 Original Orders:
+201 | Alice | $1200.0
+202 | Bob | $450.0
+203 | Charlie | $3200.5
+204 | Diana | $990.75
+
+🔵 Bubble Sorted Orders (Low to High):
+202 | Bob | $450.0
+204 | Diana | $990.75
+201 | Alice | $1200.0
+203 | Charlie | $3200.5
+
+🔴 Quick Sorted Orders (Low to High):
+202 | Bob | $450.0
+204 | Diana | $990.75
+201 | Alice | $1200.0
+203 | Charlie | $3200.5
