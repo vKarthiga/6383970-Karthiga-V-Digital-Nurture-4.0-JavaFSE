@@ -1,0 +1,14 @@
+📋 All Tasks:
+1 | Design UI | Pending
+2 | Develop Backend | In Progress
+3 | Write Tests | Pending
+
+🔍 Searching Task with ID 2:
+2 | Develop Backend | In Progress
+
+❌ Deleting Task with ID 2:
+✅ Task deleted.
+
+📋 Updated Tasks:
+1 | Design UI | Pending
+3 | Write Tests | Pending
