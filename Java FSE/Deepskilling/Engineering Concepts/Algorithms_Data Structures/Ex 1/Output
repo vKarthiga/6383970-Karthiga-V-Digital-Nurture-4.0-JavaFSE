@@ -1,0 +1,84 @@
+Inventory Menu:
+1. Add Product
+2. Update Product
+3. Delete Product
+4. View Inventory
+5. Search Product
+6. Exit
+Choose an option: 1
+Enter ID, Name, Quantity, Price: 101 Keyboard 25 999.99
+
+Inventory Menu:
+1. Add Product
+2. Update Product
+3. Delete Product
+4. View Inventory
+5. Search Product
+6. Exit
+Choose an option: 1
+Enter ID, Name, Quantity, Price: 102 Mouse 50 499.49
+
+Inventory Menu:
+1. Add Product
+2. Update Product
+3. Delete Product
+4. View Inventory
+5. Search Product
+6. Exit
+Choose an option: 4
+
+Product ID: 101, Name: Keyboard, Quantity: 25, Price: 999.99  
+Product ID: 102, Name: Mouse, Quantity: 50, Price: 499.49  
+
+Inventory Menu:
+1. Add Product
+2. Update Product
+3. Delete Product
+4. View Inventory
+5. Search Product
+6. Exit
+Choose an option: 2
+Enter ID to update: 102
+Enter new Name, Quantity, Price: WirelessMouse 45 599.99
+
+Inventory Menu:
+1. Add Product
+2. Update Product
+3. Delete Product
+4. View Inventory
+5. Search Product
+6. Exit
+Choose an option: 5
+Enter ID to search: 102
+Product ID: 102, Name: WirelessMouse, Quantity: 45, Price: 599.99
+
+Inventory Menu:
+1. Add Product
+2. Update Product
+3. Delete Product
+4. View Inventory
+5. Search Product
+6. Exit
+Choose an option: 3
+Enter ID to delete: 101
+
+Inventory Menu:
+1. Add Product
+2. Update Product
+3. Delete Product
+4. View Inventory
+5. Search Product
+6. Exit
+Choose an option: 4
+
+Product ID: 102, Name: WirelessMouse, Quantity: 45, Price: 599.99
+
+Inventory Menu:
+1. Add Product
+2. Update Product
+3. Delete Product
+4. View Inventory
+5. Search Product
+6. Exit
+Choose an option: 6
+Exiting...
