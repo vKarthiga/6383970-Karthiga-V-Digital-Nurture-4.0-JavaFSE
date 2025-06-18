@@ -1,0 +1,14 @@
+📋 All Employees:
+101 | Alice | Manager | $75000.0
+102 | Bob | Developer | $60000.0
+103 | Charlie | Designer | $50000.0
+
+🔍 Search Employee with ID 102:
+102 | Bob | Developer | $60000.0
+
+❌ Deleting Employee with ID 102:
+✅ Employee deleted.
+
+📋 Updated Employee List:
+101 | Alice | Manager | $75000.0
+103 | Charlie | Designer | $50000.0
