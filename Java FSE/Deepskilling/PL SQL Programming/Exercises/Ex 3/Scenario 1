@@ -1,0 +1,21 @@
+BEGIN
+  FOR acc IN (
+    SELECT AccountID, Balance
+    FROM Accounts
+    WHERE AccountType = 'Savings'
+    FOR UPDATE
+  ) LOOP
+    UPDATE Accounts
+    SET Balance = acc.Balance + (acc.Balance * 0.01),
+        LastModified = SYSDATE
+    WHERE AccountID = acc.AccountID;
+  END LOOP;
+
+  COMMIT;
+END;
+/
+BEGIN
+  ProcessMonthlyInterest;
+END;
+/
+SELECT AccountID, AccountType, Balance FROM Accounts;
