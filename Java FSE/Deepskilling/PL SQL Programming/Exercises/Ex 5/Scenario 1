@@ -1,0 +1,14 @@
+CREATE OR REPLACE TRIGGER UpdateCustomerLastModified
+BEFORE UPDATE ON Customers
+FOR EACH ROW
+BEGIN
+  :NEW.LastModified := SYSDATE;
+END;
+/
+
+UPDATE Customers
+SET Balance = Balance + 1000
+WHERE CustomerID = 101;
+SELECT Name, Balance, TO_CHAR(LastModified, 'DD-MON-YYYY HH24:MI:SS') AS LastModified
+FROM Customers
+WHERE CustomerID = 101;
