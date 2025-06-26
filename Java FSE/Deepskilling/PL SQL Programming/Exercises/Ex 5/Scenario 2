@@ -1,0 +1,25 @@
+CREATE OR REPLACE TRIGGER LogTransaction
+AFTER INSERT ON Transactions
+FOR EACH ROW
+BEGIN
+  INSERT INTO AuditLog (
+    TransactionID,
+    ActionType,
+    Details
+  ) VALUES (
+    :NEW.TransactionID,
+    'INSERT',
+    'Transaction of type ' || :NEW.TransactionType || 
+    ' for amount ' || :NEW.Amount || 
+    ' on account ' || :NEW.AccountID
+  );
+END;
+/
+INSERT INTO Transactions (TransactionID, AccountID, TransactionDate, Amount, TransactionType)
+VALUES (1001, 401, SYSDATE, 2000, 'Deposit');
+SELECT 
+  RPAD('Txn ID: ' || TransactionID, 20) AS "Txn Info",
+  RPAD('Action: ' || ActionType, 15) AS "Action",
+  TO_CHAR(LogDate, 'DD-MON-YYYY HH24:MI:SS') AS "Logged At",
+  Details
+FROM AuditLog;
