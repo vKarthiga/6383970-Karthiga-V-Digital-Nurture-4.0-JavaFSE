@@ -1,0 +1,13 @@
+BEGIN
+  UPDATE Employees
+  SET Salary = Salary + (Salary * (p_BonusPct / 100))
+  WHERE Department = p_Department;
+
+  COMMIT;
+END;
+/
+BEGIN
+  UpdateEmployeeBonus('IT', 10);  
+END;
+/
+SELECT EmployeeID, Name, Department, Salary FROM Employees;
