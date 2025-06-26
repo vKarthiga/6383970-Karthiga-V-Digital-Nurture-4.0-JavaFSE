@@ -1,0 +1,7 @@
+BEGIN
+  FOR c IN (SELECT CustomerID FROM Customers WHERE Balance > 10000) LOOP
+    UPDATE Customers
+    SET IsVIP = 1
+    WHERE CustomerID = c.CustomerID;
+  END LOOP;
+END;
