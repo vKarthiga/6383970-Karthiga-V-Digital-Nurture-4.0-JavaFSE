@@ -1,0 +1,28 @@
+BEGIN
+    SELECT Balance INTO v_FromBalance
+    FROM Accounts
+    WHERE AccountID = p_FromAccountID
+    FOR UPDATE;
+
+    IF v_FromBalance < p_Amount THEN
+        RAISE_APPLICATION_ERROR(-20001, 'Insufficient balance for transfer.');
+    END IF;
+
+    UPDATE Accounts
+    SET Balance = Balance - p_Amount,
+        LastModified = SYSDATE
+    WHERE AccountID = p_FromAccountID;
+
+    UPDATE Accounts
+    SET Balance = Balance + p_Amount,
+        LastModified = SYSDATE
+    WHERE AccountID = p_ToAccountID;
+
+    COMMIT;
+END;
+/
+BEGIN
+  TransferFunds(301, 302, 3000);  
+END;
+/
+SELECT AccountID, Balance FROM Accounts;
