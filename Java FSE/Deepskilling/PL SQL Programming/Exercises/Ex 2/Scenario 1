@@ -1,0 +1,46 @@
+BEGIN
+    -- Fetch balance from source account
+    SELECT Balance INTO v_FromBalance
+    FROM Accounts
+    WHERE AccountID = p_FromAccountID
+    FOR UPDATE;
+
+    -- Check sufficient funds
+    IF v_FromBalance < p_Amount THEN
+        RAISE_APPLICATION_ERROR(-20001, 'Insufficient funds');
+    END IF;
+
+    -- Deduct from source
+    UPDATE Accounts
+    SET Balance = Balance - p_Amount,
+        LastModified = SYSDATE
+    WHERE AccountID = p_FromAccountID;
+
+    -- Add to destination
+    UPDATE Accounts
+    SET Balance = Balance + p_Amount,
+        LastModified = SYSDATE
+    WHERE AccountID = p_ToAccountID;
+
+    -- Commit transaction
+    COMMIT;
+
+EXCEPTION
+    WHEN OTHERS THEN
+        -- Rollback on error
+        ROLLBACK;
+
+        -- Log error
+        INSERT INTO ErrorLog (ErrorMessage)
+        VALUES ('Error in SafeTransferFunds: ' || SQLERRM);
+
+        -- Optional debug output
+        DBMS_OUTPUT.PUT_LINE('Transfer failed. Error logged.');
+END;
+/
+BEGIN
+  SafeTransferFunds(101, 102, 2000);
+END;
+/
+SELECT AccountID, Balance FROM Accounts;
+SELECT * FROM ErrorLog ORDER BY LogID DESC;
