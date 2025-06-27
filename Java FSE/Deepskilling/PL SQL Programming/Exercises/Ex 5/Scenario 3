@@ -1,0 +1,30 @@
+CREATE OR REPLACE TRIGGER CheckTransactionRules
+BEFORE INSERT ON Transactions
+FOR EACH ROW
+DECLARE
+    v_Balance NUMBER;
+BEGIN
+    -- Fetch current balance from the Accounts table
+    SELECT Balance INTO v_Balance
+    FROM Accounts
+    WHERE AccountID = :NEW.AccountID;
+
+    -- Rule 1: Withdrawal must not exceed balance
+    IF :NEW.TransactionType = 'Withdrawal' THEN
+        IF :NEW.Amount > v_Balance THEN
+            RAISE_APPLICATION_ERROR(-20001, 'Withdrawal exceeds available balance');
+        END IF;
+
+    -- Rule 2: Deposit amount must be positive
+    ELSIF :NEW.TransactionType = 'Deposit' THEN
+        IF :NEW.Amount <= 0 THEN
+            RAISE_APPLICATION_ERROR(-20002, 'Deposit amount must be greater than 0');
+        END IF;
+    END IF;
+END;
+/
+INSERT INTO Transactions (TransactionID, AccountID, TransactionDate, Amount, TransactionType)
+VALUES (1001, 501, SYSDATE, 2000, 'Deposit');
+INSERT INTO Transactions (TransactionID, AccountID, TransactionDate, Amount, TransactionType)
+VALUES (1004, 501, SYSDATE, 3000, 'Withdrawal');
+SELECT * FROM Transactions ORDER BY TransactionID;
