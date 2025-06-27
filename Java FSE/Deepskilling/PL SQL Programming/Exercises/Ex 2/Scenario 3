@@ -1,0 +1,29 @@
+CREATE OR REPLACE PROCEDURE AddNewCustomer (
+    p_CustomerID IN NUMBER,
+    p_Name       IN VARCHAR2,
+    p_DOB        IN DATE,
+    p_Balance    IN NUMBER
+) AS
+BEGIN
+    -- Attempt to insert the new customer
+    INSERT INTO Customers (CustomerID, Name, DOB, Balance, LastModified)
+    VALUES (p_CustomerID, p_Name, p_DOB, p_Balance, SYSDATE);
+
+    COMMIT;
+
+EXCEPTION
+    WHEN DUP_VAL_ON_INDEX THEN
+        -- Handle duplicate CustomerID
+        INSERT INTO ErrorLog (ErrorMessage)
+        VALUES ('Duplicate customer ID: ' || p_CustomerID);
+        ROLLBACK;
+
+    WHEN OTHERS THEN
+        -- Catch all other errors
+        INSERT INTO ErrorLog (ErrorMessage)
+        VALUES ('General error in AddNewCustomer: ' || SQLERRM);
+        ROLLBACK;
+END;
+/
+SELECT * FROM Customers;
+SELECT * FROM ErrorLog ORDER BY LogID DESC;
