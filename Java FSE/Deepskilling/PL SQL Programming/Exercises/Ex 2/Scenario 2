@@ -1,0 +1,32 @@
+CREATE OR REPLACE PROCEDURE UpdateSalary (
+    p_EmployeeID   IN NUMBER,
+    p_Percentage   IN NUMBER
+) AS
+BEGIN
+    -- Attempt to update salary
+    UPDATE Employees
+    SET Salary = Salary + (Salary * (p_Percentage / 100))
+    WHERE EmployeeID = p_EmployeeID;
+
+    -- Check if employee was found
+    IF SQL%ROWCOUNT = 0 THEN
+        RAISE_APPLICATION_ERROR(-20001, 'Employee not found');
+    END IF;
+
+    COMMIT;
+
+EXCEPTION
+    WHEN OTHERS THEN
+        -- Log the error
+        INSERT INTO ErrorLog (ErrorMessage)
+        VALUES ('Error in UpdateSalary: ' || SQLERRM);
+        ROLLBACK;
+END;
+/
+BEGIN
+  UpdateSalary(1, 10);  -- Increase Alice's salary by 10%
+END;
+/
+
+SELECT EmployeeID, Name, Salary FROM Employees;
+SELECT * FROM ErrorLog ORDER BY LogID DESC;
