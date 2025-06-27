@@ -1,0 +1,33 @@
+SET SERVEROUTPUT ON;
+
+DECLARE
+  CURSOR txn_cursor IS
+    SELECT c.Name, t.AccountID, t.TransactionDate, t.Amount, t.TransactionType
+    FROM Transactions t
+    JOIN Accounts a ON t.AccountID = a.AccountID
+    JOIN Customers c ON a.CustomerID = c.CustomerID
+    WHERE EXTRACT(MONTH FROM t.TransactionDate) = EXTRACT(MONTH FROM SYSDATE)
+      AND EXTRACT(YEAR FROM t.TransactionDate) = EXTRACT(YEAR FROM SYSDATE);
+
+  v_Name           Customers.Name%TYPE;
+  v_AccountID      Transactions.AccountID%TYPE;
+  v_Date           Transactions.TransactionDate%TYPE;
+  v_Amount         Transactions.Amount%TYPE;
+  v_Type           Transactions.TransactionType%TYPE;
+BEGIN
+  OPEN txn_cursor;
+  LOOP
+    FETCH txn_cursor INTO v_Name, v_AccountID, v_Date, v_Amount, v_Type;
+    EXIT WHEN txn_cursor%NOTFOUND;
+
+    DBMS_OUTPUT.PUT_LINE(
+      'Customer: ' || RPAD(v_Name, 15) ||
+      ' | Account: ' || v_AccountID ||
+      ' | Date: ' || TO_CHAR(v_Date, 'DD-MON-YYYY') ||
+      ' | Amount: ₹' || v_Amount ||
+      ' | Type: ' || v_Type
+    );
+  END LOOP;
+  CLOSE txn_cursor;
+END;
+/
