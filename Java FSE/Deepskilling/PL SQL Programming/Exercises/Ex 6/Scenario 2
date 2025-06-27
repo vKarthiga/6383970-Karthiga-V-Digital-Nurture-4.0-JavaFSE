@@ -1,0 +1,33 @@
+SET SERVEROUTPUT ON;
+
+DECLARE
+  CURSOR acc_cursor IS
+    SELECT AccountID, Balance
+    FROM Accounts;
+
+  v_AccountID Accounts.AccountID%TYPE;
+  v_Balance   Accounts.Balance%TYPE;
+  v_Fee       CONSTANT NUMBER := 500;
+BEGIN
+  OPEN acc_cursor;
+  LOOP
+    FETCH acc_cursor INTO v_AccountID, v_Balance;
+    EXIT WHEN acc_cursor%NOTFOUND;
+
+    -- Apply annual fee
+    UPDATE Accounts
+    SET Balance = Balance - v_Fee,
+        LastModified = SYSDATE
+    WHERE AccountID = v_AccountID;
+
+    -- Print result
+    DBMS_OUTPUT.PUT_LINE('Account ' || v_AccountID || 
+                         ' charged ₹' || v_Fee || 
+                         '. New balance will be updated.');
+
+  END LOOP;
+  CLOSE acc_cursor;
+
+  COMMIT;
+END;
+/
