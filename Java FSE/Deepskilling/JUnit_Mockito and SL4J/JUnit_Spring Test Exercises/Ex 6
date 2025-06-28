@@ -1,0 +1,83 @@
+Create Custom Exception: UserNotFoundException.java
+package com.example.demo.exception;
+
+public class UserNotFoundException extends RuntimeException {
+    public UserNotFoundException(String message) {
+        super(message);
+    }
+}
+Update Service: UserService.java
+package com.example.demo.service;
+
+import com.example.demo.exception.UserNotFoundException;
+import com.example.demo.model.User;
+import com.example.demo.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service
+public class UserService {
+
+    @Autowired
+    private UserRepository userRepository;
+
+    public User getUserById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + id));
+    }
+}
+Unit Test for Exception: UserServiceExceptionTest.java
+package com.example.demo.service;
+
+import com.example.demo.exception.UserNotFoundException;
+import com.example.demo.repository.UserRepository;
+import com.example.demo.model.User;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+class UserServiceExceptionTest {
+
+    private UserRepository userRepository;
+    private UserService userService;
+
+    @BeforeEach
+    void setUp() {
+        userRepository = mock(UserRepository.class);
+        userService = new UserService();
+        userService.userRepository = userRepository; // manually inject mock
+    }
+
+    @Test
+    void testGetUserById_UserNotFound_ThrowsException() {
+        // Arrange
+        Long id = 999L;
+        when(userRepository.findById(id)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        UserNotFoundException ex = assertThrows(UserNotFoundException.class, () -> {
+            userService.getUserById(id);
+        });
+
+        assertEquals("User not found with ID: 999", ex.getMessage());
+        verify(userRepository, times(1)).findById(id);
+    }
+}
+Global Exception Handler: GlobalExceptionHandler.java
+package com.example.demo.exception;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@ControllerAdvice
+public class GlobalExceptionHandler {
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<String> handleUserNotFound(UserNotFoundException ex) {
+        return ResponseEntity.status(404).body(ex.getMessage());
+    }
+}
