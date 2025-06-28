@@ -1,0 +1,33 @@
+UserControllerTest.java:
+package com.example.demo.controller;
+import com.example.demo.model.User;
+import com.example.demo.service.UserService;
+import org.junit.jupiter.api.Test;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import com.fasterxml.jackson.databind.ObjectMapper;
+@WebMvcTest(UserController.class)
+class UserControllerTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+    @MockBean
+    private UserService userService;
+    @Autowired
+    private ObjectMapper objectMapper;
+    @Test
+    void testGetUser_ReturnsUser() throws Exception {
+        Long userId = 1L;
+        User mockUser = new User(userId, "Alice");
+        when(userService.getUserById(userId)).thenReturn(mockUser);
+        mockMvc.perform(MockMvcRequestBuilders.get("/users/{id}", userId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(userId))
+                .andExpect(jsonPath("$.name").value("Alice"));
+    }
+}
