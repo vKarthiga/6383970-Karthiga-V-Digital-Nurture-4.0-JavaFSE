@@ -1,0 +1,43 @@
+UserServiceTest.java:
+
+package com.example.demo.service;
+
+import com.example.demo.model.User;
+import com.example.demo.repository.UserRepository;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+
+import java.util.Optional;
+
+import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
+class UserServiceTest {
+    @Mock
+    private UserRepository userRepository;
+    @InjectMocks
+    private UserService userService;
+    public UserServiceTest() {
+        MockitoAnnotations.openMocks(this); // Initialize mocks
+    }
+    @Test
+    void testGetUserById_Found() {
+        Long userId = 1L;
+        User mockUser = new User(userId, "Alice");
+        when(userRepository.findById(userId)).thenReturn(Optional.of(mockUser));
+        User result = userService.getUserById(userId);
+        assertNotNull(result);
+        assertEquals("Alice", result.getName());
+        assertEquals(1L, result.getId());
+        verify(userRepository, times(1)).findById(userId);
+    }
+    @Test
+    void testGetUserById_NotFound() {
+        Long userId = 2L;
+        when(userRepository.findById(userId)).thenReturn(Optional.empty());
+        User result = userService.getUserById(userId);
+        assertNull(result);
+        verify(userRepository, times(1)).findById(userId);
+    }
+}
