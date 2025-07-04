@@ -1,0 +1,7 @@
+private static void testGetEmployee() {
+    LOGGER.info("Start");
+    Employee employee = employeeService.get(1);
+    LOGGER.debug("Employee:{}", employee);
+    LOGGER.debug("Department:{}", employee.getDepartment());
+    LOGGER.info("End");
+}
