@@ -1,0 +1,7 @@
+private static void testUpdateEmployee() {
+    Employee employee = employeeService.get(2); // existing employee
+    Department department = departmentService.get(2); // new department
+    employee.setDepartment(department);
+    employeeService.save(employee);
+    LOGGER.debug("Updated Employee:{}", employee);
+}
