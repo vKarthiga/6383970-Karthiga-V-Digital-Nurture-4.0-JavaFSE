@@ -1,0 +1,15 @@
+private static void testAddSkillToEmployee() {
+    LOGGER.info("Start");
+
+    Employee employee = employeeService.get(1); // Replace with an actual ID
+    Skill skill = skillService.get(3);          // Replace with a skill not yet mapped
+
+    Set<Skill> skills = employee.getSkillList();
+    skills.add(skill);
+    employee.setSkillList(skills);
+
+    employeeService.save(employee);
+
+    LOGGER.debug("Updated Employee with new Skill: {}", employee);
+    LOGGER.info("End");
+}
