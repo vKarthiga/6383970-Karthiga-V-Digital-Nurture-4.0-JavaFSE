@@ -1,0 +1,28 @@
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+   <session-factory>
+
+      <!-- Dialect -->
+      <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+
+      <!-- JDBC driver class -->
+      <property name="hibernate.connection.driver_class">com.mysql.cj.jdbc.Driver</property>
+
+      <!-- DB connection URL -->
+      <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/yourdb</property>
+
+      <!-- DB credentials -->
+      <property name="hibernate.connection.username">root</property>
+      <property name="hibernate.connection.password">root</property>
+
+      <!-- Optional properties -->
+      <property name="show_sql">true</property>
+      <property name="hbm2ddl.auto">update</property>
+
+      <!-- Annotated class -->
+      <mapping class="com.tutorialspoint.Employee"/>
+
+   </session-factory>
+</hibernate-configuration>
