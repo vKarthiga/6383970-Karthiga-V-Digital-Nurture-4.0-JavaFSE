@@ -1,0 +1,9 @@
+@ManyToOne
+@JoinColumn(name = "em_dp_id")
+private Department department;
+
+OrmLearnApplication Main Method Setup
+
+AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(OrmLearnApplication.class);
+employeeService = context.getBean(EmployeeService.class);
+departmentService = context.getBean(DepartmentService.class);
