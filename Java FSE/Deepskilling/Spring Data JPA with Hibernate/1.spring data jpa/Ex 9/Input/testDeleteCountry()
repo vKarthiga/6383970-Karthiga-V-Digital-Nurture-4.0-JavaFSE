@@ -1,0 +1,13 @@
+private static void testDeleteCountry() {
+    LOGGER.info("Start");
+
+    countryService.deleteCountry("XZ"); // assuming "XZ" was added in testAddCountry
+
+    try {
+        countryService.findCountryByCode("XZ"); // should throw exception
+    } catch (CountryNotFoundException e) {
+        LOGGER.error("Country deleted successfully. Exception: {}", e.getMessage());
+    }
+
+    LOGGER.info("End");
+}
