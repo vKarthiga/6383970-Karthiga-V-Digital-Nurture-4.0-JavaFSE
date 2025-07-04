@@ -1,0 +1,11 @@
+private static void testAddEmployee() {
+    Employee employee = new Employee();
+    employee.setName("John Doe");
+    employee.setSalary(50000.00);
+    employee.setPermanent(true);
+    employee.setDateOfBirth(new Date());
+    Department department = departmentService.get(1);
+    employee.setDepartment(department);
+    employeeService.save(employee);
+    LOGGER.debug("Employee:{}", employee);
+}
