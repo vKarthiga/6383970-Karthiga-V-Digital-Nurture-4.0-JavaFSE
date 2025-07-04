@@ -1,0 +1,6 @@
+public static void main(String[] args) {
+    ConfigurableApplicationContext context = SpringApplication.run(OrmLearnApplication.class, args);
+    stockRepository = context.getBean(StockRepository.class);
+
+    testStockQueries(); // Call your query test method
+}
