@@ -1,0 +1,13 @@
+Core Components
+1.CriteriaBuilder – Factory to construct criteria queries
+CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+
+2.CriteriaQuery – Represents the actual query
+CriteriaQuery<Employee> query = cb.createQuery(Employee.class);
+
+3.Root<T> – Represents the FROM clause
+Root<Employee> root = query.from(Employee.class);
+
+4.TypedQuery<T> – Executes the built query
+TypedQuery<Employee> tq = entityManager.createQuery(query);
+List<Employee> results = tq.getResultList();
