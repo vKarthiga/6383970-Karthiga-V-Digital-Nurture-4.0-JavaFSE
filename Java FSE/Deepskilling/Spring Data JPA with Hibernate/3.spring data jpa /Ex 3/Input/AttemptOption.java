@@ -1,15 +1,18 @@
 @Entity
+@Table(name = "attempt_option")
 public class AttemptOption {
     @Id
+    @Column(name = "ao_id")
     private int id;
 
-    @ManyToOne
-    @JoinColumn(name = "attempt_question_id")
-    private AttemptQuestion attemptQuestion;
+    @Column(name = "ao_selected")
+    private boolean selected;
 
     @ManyToOne
-    @JoinColumn(name = "option_id")
+    @JoinColumn(name = "ao_op_id")
     private Option option;
 
-    private boolean selected;
+    @ManyToOne
+    @JoinColumn(name = "ao_aq_id")
+    private AttemptQuestion attemptQuestion;
 }
