@@ -1,0 +1,6 @@
+SELECT e.*, d.*, s.*
+FROM employee e
+LEFT OUTER JOIN department d ON e.em_dp_id = d.dp_id
+LEFT OUTER JOIN employee_skill es ON e.em_id = es.es_em_id
+LEFT OUTER JOIN skill s ON es.es_sk_id = s.sk_id
+WHERE e.em_permanent = 1
