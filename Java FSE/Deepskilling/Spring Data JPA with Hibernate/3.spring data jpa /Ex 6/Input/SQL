@@ -1,0 +1,5 @@
+SELECT * FROM product 
+WHERE ramSize >= 8 
+  AND weight <= 2.0 
+  AND os = 'Windows' 
+  AND customerReview >= 4
