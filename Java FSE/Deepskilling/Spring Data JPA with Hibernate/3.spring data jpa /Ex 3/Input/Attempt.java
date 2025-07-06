@@ -1,13 +1,19 @@
 @Entity
+@Table(name = "attempt")
 public class Attempt {
     @Id
+    @Column(name = "at_id")
     private int id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @Column(name = "at_date")
+    private LocalDate date;
 
-    private LocalDateTime attemptedDate;
+    @Column(name = "at_score")
+    private double score;
+
+    @ManyToOne
+    @JoinColumn(name = "at_us_id")
+    private User user;
 
     @OneToMany(mappedBy = "attempt", fetch = FetchType.LAZY)
     private List<AttemptQuestion> attemptQuestions;
