@@ -1,0 +1,15 @@
+@Query Annotation
+@Query("SELECT e FROM Employee e WHERE e.name = :name")
+List<Employee> findByName(@Param("name") String name);
+
+HQL FETCH Keyword
+SELECT d FROM Department d JOIN FETCH d.employees
+
+Aggregate Functions in HQL
+SELECT COUNT(e) FROM Employee e
+SELECT AVG(e.salary) FROM Employee e
+SELECT MAX(e.salary) FROM Employee e
+
+Native Query
+@Query(value = "SELECT * FROM employee WHERE name = :name", nativeQuery = true)
+List<Employee> findByNameNative(@Param("name") String name);
