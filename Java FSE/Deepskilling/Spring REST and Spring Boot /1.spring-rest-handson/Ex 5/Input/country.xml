@@ -13,3 +13,12 @@ File: src/main/resources/country.xml
     </bean>
 
 </beans>
+
+Modify country.xml:
+
+xml
+Copy code
+<bean id="country" class="com.cognizant.springlearn.Country" scope="prototype">
+    <property name="code" value="IN"/>
+    <property name="name" value="India"/>
+</bean>
