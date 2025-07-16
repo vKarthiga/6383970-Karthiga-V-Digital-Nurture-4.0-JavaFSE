@@ -1,0 +1,34 @@
+AuthenticationController.java
+// Inside AuthenticationController.java
+
+private String getUser(String authHeader) {
+    // Extract the Base64 encoded portion (after "Basic ")
+    String encodedCredentials = authHeader.substring("Basic ".length());
+
+    // Decode Base64 to get username:password
+    byte[] decodedBytes = Base64.getDecoder().decode(encodedCredentials);
+    String decoded = new String(decodedBytes); // example: "user:pwd"
+
+    // Log full decoded string (optional)
+    LOGGER.debug("Decoded credentials: {}", decoded);
+
+    // Extract only the username
+    String username = decoded.split(":")[0];
+    return username;
+}
+
+Integration in the Controller Method
+@GetMapping("/authenticate")
+public Map<String, String> authenticate(@RequestHeader("Authorization") String authHeader) {
+    LOGGER.info("Start authentication");
+    LOGGER.debug("Authorization Header: {}", authHeader);
+
+    String user = getUser(authHeader); // decode user from header
+    String token = generateJwt(user);  // generate JWT for user
+
+    Map<String, String> map = new HashMap<>();
+    map.put("token", token);
+
+    LOGGER.info("End authentication");
+    return map;
+}
