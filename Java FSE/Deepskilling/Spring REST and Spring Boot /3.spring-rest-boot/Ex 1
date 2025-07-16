@@ -26,11 +26,71 @@ Employee.xml
         <property name="salary" value="55000"/>
     </bean>
     <bean id="employeeList" class="java.util.ArrayList">
-    <constructo
+    <constructor-args>
     <list> 
     <ref bean="emp1"/>
     <ref bean="emp2"/>
     </list>
+</constructor-arg>
+    </bean>
+</beans>
+
+EmployeeController.java
+package com.cognizant.springlearn.controller;
+import com.cognizant.springlearn.Employee;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.web.bind.annotation.*;
+import java.util.List;
+@RestController
+public class EmployeeController {
+    @GetMapping("/employees")
+    public List<Employee> getEmployees() {
+        ApplicationContext context = new ClassPathXmlApplicationContext("employee.xml");
+        return context.getBean("employeeList", List.class);
+    }
+    @GetMapping("/employees/{id}")
+    public Employee getEmployeeById(@PathVariable String id) {
+        ApplicationContext context = new ClassPathXmlApplicationContext("employee.xml");
+        List<Employee> list = context.getBean("employeeList", List.class);
+        return list.stream()
+                   .filter(e -> e.getId().equals(id))
+                   .findFirst()
+                   .orElse(null);
+    }
+}
+
+Employee.service.ts
+@Injectable({
+  providedIn: 'root'
+})
+export class EmployeeService {
+  private apiUrl = 'http://localhost:8083/employees';
+  constructor(private http: HttpClient) { }
+  getEmployees(): Observable<Employee[]> {
+    return this.http.get<Employee[]>(this.apiUrl);
+  }
+  getEmployeeById(id: string): Observable<Employee> {
+    return this.http.get<Employee>(`${this.apiUrl}/${id}`);
+  }
+}
+
+Employee-list.component.ts
+ngOnInit(): void {
+  this.employeeService.getEmployees().subscribe(data => {
+    this.employees = data;
+  });
+}
+
+Edit-employee.component.ts
+ngOnInit(): void {
+  const id = this.route.snapshot.paramMap.get('id');
+  if (id) {
+    this.employeeService.getEmployeeById(id).subscribe(emp => {
+      this.employee = emp;
+    });
+  }
+}
     
     
     
