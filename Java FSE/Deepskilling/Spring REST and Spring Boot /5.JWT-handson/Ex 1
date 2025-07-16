@@ -1,0 +1,181 @@
+pom.xml
+<!-- Spring Security -->
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-security</artifactId>
+</dependency>
+
+<!-- JWT -->
+<dependency>
+    <groupId>io.jsonwebtoken</groupId>
+    <artifactId>jjwt</artifactId>
+    <version>0.9.0</version>
+</dependency>
+
+SecurityConfig.java
+package com.cognizant.springsecurity.security;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+
+import com.cognizant.springsecurity.security.filter.JwtAuthorizationFilter;
+
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig {
+
+    @Bean
+    public AuthenticationManager authenticationManager(HttpSecurity http, PasswordEncoder encoder)
+            throws Exception {
+        return http.getSharedObject(AuthenticationManagerBuilder.class)
+            .inMemoryAuthentication()
+                .withUser("admin").password(encoder.encode("pwd")).roles("ADMIN")
+            .and()
+                .withUser("user").password(encoder.encode("pwd")).roles("USER")
+            .and()
+            .and().build();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http, AuthenticationManager authManager) throws Exception {
+        return http.csrf().disable()
+            .httpBasic()
+            .and()
+            .authorizeRequests()
+                .antMatchers("/authenticate").hasAnyRole("USER", "ADMIN")
+                .anyRequest().authenticated()
+            .and()
+            .addFilter(new JwtAuthorizationFilter(authManager))
+            .build();
+    }
+}
+
+AuthenticationController.java
+package com.cognizant.springsecurity.controller;
+
+import java.util.Base64;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RestController;
+
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+
+@RestController
+public class AuthenticationController {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationController.class);
+
+    @GetMapping("/authenticate")
+    public Map<String, String> authenticate(@RequestHeader("Authorization") String authHeader) {
+        LOGGER.info("Start authentication");
+        LOGGER.debug("Authorization Header: {}", authHeader);
+
+        String user = getUser(authHeader);
+        String token = generateJwt(user);
+
+        Map<String, String> map = new HashMap<>();
+        map.put("token", token);
+
+        LOGGER.info("End authentication");
+        return map;
+    }
+
+    private String getUser(String authHeader) {
+        String encodedCredentials = authHeader.substring("Basic ".length());
+        byte[] decodedBytes = Base64.getDecoder().decode(encodedCredentials);
+        String decoded = new String(decodedBytes);
+        return decoded.split(":")[0];
+    }
+
+    private String generateJwt(String user) {
+        return Jwts.builder()
+                .setSubject(user)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + 20 * 60 * 1000)) // 20 minutes
+                .signWith(SignatureAlgorithm.HS256, "secretkey")
+                .compact();
+    }
+}
+
+JwtAuthorizationFilter.java
+package com.cognizant.springsecurity.security.filter;
+import java.io.IOException;
+import java.util.ArrayList;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+
+public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(JwtAuthorizationFilter.class);
+
+    public JwtAuthorizationFilter(AuthenticationManager authenticationManager) {
+        super(authenticationManager);
+    }
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res,
+                                    FilterChain chain) throws IOException, ServletException {
+        LOGGER.info("JWT Filter Start");
+        String header = req.getHeader("Authorization");
+
+        if (header == null || !header.startsWith("Bearer ")) {
+            chain.doFilter(req, res);
+            return;
+        }
+
+        UsernamePasswordAuthenticationToken authentication = getAuthentication(req);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        chain.doFilter(req, res);
+        LOGGER.info("JWT Filter End");
+    }
+
+    private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
+        String token = request.getHeader("Authorization");
+        if (token != null) {
+            try {
+                Jws<Claims> jws = Jwts.parser()
+                        .setSigningKey("secretkey")
+                        .parseClaimsJws(token.replace("Bearer ", ""));
+                String user = jws.getBody().getSubject();
+
+                if (user != null) {
+                    return new UsernamePasswordAuthenticationToken(user, null, new ArrayList<>());
+                }
+            } catch (JwtException e) {
+                return null;
+            }
+        }
+        return null;
+    }
+}
