@@ -1,0 +1,38 @@
+1. Add JWT Dependency 
+<dependency>
+    <groupId>io.jsonwebtoken</groupId>
+    <artifactId>jjwt</artifactId>
+    <version>0.9.0</version>
+</dependency>
+``>
+
+2. Implement `generateJwt()` Method
+
+Add this method inside `AuthenticationController.java`:
+
+```java
+private String generateJwt(String user) {
+    return Jwts.builder()
+            .setSubject(user) // who the token is for
+            .setIssuedAt(new Date()) // when the token is issued
+            .setExpiration(new Date(System.currentTimeMillis() + 20 * 60 * 1000)) // token valid for 20 minutes
+            .signWith(SignatureAlgorithm.HS256, "secretkey") // sign with algorithm and secret
+            .compact(); // generate the final token
+}
+
+3. Use It Inside authenticate() Method
+
+@GetMapping("/authenticate")
+public Map<String, String> authenticate(@RequestHeader("Authorization") String authHeader) {
+    LOGGER.info("Start authentication");
+
+    String user = getUser(authHeader);       // Extract username from Basic Auth
+    String token = generateJwt(user);        // Generate token based on username
+
+    Map<String, String> map = new HashMap<>();
+    map.put("token", token);                 // Send it as JSON
+
+    LOGGER.info("End authentication");
+    return map;
+}
+
