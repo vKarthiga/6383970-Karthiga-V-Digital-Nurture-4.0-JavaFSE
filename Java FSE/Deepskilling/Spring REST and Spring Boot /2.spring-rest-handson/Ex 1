@@ -1,0 +1,49 @@
+HTTP Request Response
+What is HTTP Request and Response?
+HTTP Request is the message sent by the client (usually a browser) to the server to ask for a resource.
+It contains:
+   Request line:
+* Method: The action to perform (e.g., GET, POST)
+* Resource: The URI/path being requested (e.g., /hello.txt)
+* HTTP version: Protocol version used (e.g., HTTP/1.1)
+   Headers: Additional info about the client or request (e.g., User-Agent, Host, Accept- Language)
+   Body: Optional, mainly in POST or PUT requests (not in GET usually)
+HTTP Response is the server’s reply to the client’s request. It contains:
+   Status line:
+* HTTP version (e.g., HTTP/1.1)
+* Status code (e.g., 200 means OK/success)
+* Reason phrase/message (e.g., OK)
+   Headers: Metadata about the response (e.g., Date, Server type, Content-Type, Content- Length)
+   Body: The actual content requested (e.g., HTML, JSON, image bytes)
+   
+Example 
+Request:
+makefile
+GET /hello.txt HTTP/1.1
+User-Agent: curl/7.16.3 libcurl/7.16.3 OpenSSL/0.9.7l zlib/1.2.3 Host: www.example.com
+ Accept-Language: en, mi
+  Method = GET
+   Resource = /hello.txt
+   HTTP Version = HTTP/1.1
+  User-Agent = identifies client software   Host = the server’s domain
+  
+Response:
+HTTP/1.1 200 OK
+Date: Mon, 27 Jul 2009 12:28:53 GMT
+Server: Apache
+Last-Modified: Wed, 22 Jul 2009 19:15:56 GMT ETag: "34aa387-d-1568eb00"
+Accept-Ranges: bytes Content-Length: 51 Vary: Accept-Encoding
+Content-Type: text/plain
+Hello World! My payload includes a trailing CRLF. 
+Status = 200 OK (success)
+Content-Type = text/plain (plain text data)
+Body = "Hello World! My payload includes a trailing CRLF."
+How to view HTTP Request/Response in browser:
+  Open Chrome DevTools (F12)   Go to Network tab
+   Reload page or perform action
+   Click on any request to see:
+* General info (method, URL, status)  
+* Request headers (sent by browser)  
+* Response headers (sent by server)  
+* Response body/content
+ 
