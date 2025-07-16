@@ -1,0 +1,58 @@
+EmployeeService.java
+package com.cognizant.springlearn.service;
+
+import com.cognizant.springlearn.Employee;
+import com.cognizant.springlearn.dao.EmployeeDao;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+@Service  // Change from @Component to @Service
+public class EmployeeService {
+    @Autowired
+    private EmployeeDao employeeDao;
+    @Transactional
+    public List<Employee> getAllEmployees() {
+        return employeeDao.getAllEmployees();
+    }
+}
+
+EmployeeController.java
+package com.cognizant.springlearn.controller;
+import com.cognizant.springlearn.Employee;
+import com.cognizant.springlearn.service.EmployeeService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+import java.util.List;
+@RestController
+public class EmployeeController {
+    @Autowired
+    private EmployeeService employeeService;
+    @GetMapping("/employees")
+    public List<Employee> getAllEmployees() {
+        return employeeService.getAllEmployees();
+    }
+}
+
+
+OUTPUT
+[
+  {
+    "id": "101",
+    "name": "John Doe",
+    "salary": 50000,
+    "permanent": true,
+    "dateOfBirth": "1990-05-15",
+    "department": {
+      "id": 1,
+      "name": "HR"
+    },
+    "skillList": [
+      {"id": 1, "name": "Java"},
+      {"id": 2, "name": "MySQL"}
+    ]
+  },
+  ...
+]
