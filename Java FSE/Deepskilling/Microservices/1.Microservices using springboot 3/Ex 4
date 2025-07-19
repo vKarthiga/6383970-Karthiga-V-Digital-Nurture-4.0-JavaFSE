@@ -1,0 +1,104 @@
+1. Add Dependencies (pom.xml)
+<dependencies>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+
+    <dependency>
+        <groupId>io.github.resilience4j</groupId>
+        <artifactId>resilience4j-spring-boot3</artifactId>
+    </dependency>
+
+    <dependency>
+        <groupId>io.github.resilience4j</groupId>
+        <artifactId>resilience4j-circuitbreaker</artifactId>
+    </dependency>
+
+    <dependency>
+        <groupId>io.github.resilience4j</groupId>
+        <artifactId>resilience4j-micrometer</artifactId>
+    </dependency>
+
+    <!-- Optional: Logging -->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-actuator</artifactId>
+    </dependency>
+
+    <dependency>
+        <groupId>io.micrometer</groupId>
+        <artifactId>micrometer-registry-prometheus</artifactId>
+    </dependency>
+</dependencies>
+
+2. Create Payment Service Logic
+@Service
+public class PaymentService {
+
+    private final RestTemplate restTemplate;
+    private final Logger logger = LoggerFactory.getLogger(PaymentService.class);
+
+    public PaymentService(RestTemplateBuilder builder) {
+        this.restTemplate = builder.build();
+    }
+
+    @CircuitBreaker(name = "paymentGateway", fallbackMethod = "fallbackPayment")
+    public String processPayment() {
+        logger.info("Calling third-party payment API...");
+        return restTemplate.getForObject("http://localhost:8081/payment-gateway/charge", String.class);
+    }
+
+    public String fallbackPayment(Throwable ex) {
+        logger.error("Payment Gateway is unavailable. Fallback method called. Reason: {}", ex.getMessage());
+        return "Payment temporarily unavailable. Please try again later.";
+    }
+}
+
+3. Create Controller
+@RestController
+@RequestMapping("/payments")
+public class PaymentController {
+
+    @Autowired
+    private PaymentService paymentService;
+
+    @GetMapping("/charge")
+    public ResponseEntity<String> makePayment() {
+        return ResponseEntity.ok(paymentService.processPayment());
+    }
+}
+
+4. Register RestTemplate Bean
+@Configuration
+public class AppConfig {
+    @Bean
+    public RestTemplate restTemplate(RestTemplateBuilder builder) {
+        return builder.build();
+    }
+}
+
+5. Configure Circuit Breaker in application.yml
+resilience4j:
+  circuitbreaker:
+    instances:
+      paymentGateway:
+        registerHealthIndicator: true
+        slidingWindowSize: 5
+        minimumNumberOfCalls: 3
+        permittedNumberOfCallsInHalfOpenState: 2
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10s
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        slowCallRateThreshold: 50
+        slowCallDurationThreshold: 2s
+
+6. Enable Monitoring via Actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
