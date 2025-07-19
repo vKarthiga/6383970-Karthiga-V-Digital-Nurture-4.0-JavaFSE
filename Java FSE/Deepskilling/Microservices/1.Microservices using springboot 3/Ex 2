@@ -1,0 +1,149 @@
+1. Set Up Eureka Server
+Dependencies (pom.xml):
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
+</dependency>
+
+Main Class:
+@SpringBootApplication
+@EnableEurekaServer
+public class EurekaServerApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(EurekaServerApplication.class, args);
+    }
+}
+
+application.yml:
+server:
+  port: 8761
+
+eureka:
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+
+2. Set Up Spring Cloud Config Server
+
+Dependencies (pom.xml):
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-config-server</artifactId>
+</dependency>
+
+Main Class:
+@SpringBootApplication
+@EnableConfigServer
+public class ConfigServerApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(ConfigServerApplication.class, args);
+    }
+}
+
+application.yml:
+server:
+  port: 8888
+
+spring:
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/<your-username>/<your-config-repo>
+
+Create a Git repo with:
+
+product-service.yml
+
+inventory-service.yml
+
+3. Product Service
+
+Dependencies:
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+</dependency>
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-config</artifactId>
+</dependency>
+
+bootstrap.yml:
+spring:
+  application:
+    name: product-service
+  cloud:
+    config:
+      uri: http://localhost:8888
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+Entity:
+@Entity
+public class Product {
+    @Id @GeneratedValue
+    private Long id;
+    private String name;
+    private int quantity;
+}
+
+Controller (CRUD):
+@RestController
+@RequestMapping("/products")
+public class ProductController {
+    @Autowired
+    private ProductRepository repo;
+
+    @PostMapping
+    public Product create(@RequestBody Product product) {
+        return repo.save(product);
+    }
+
+    @GetMapping
+    public List<Product> getAll() {
+        return repo.findAll();
+    }
+}
+
+4. Inventory Service
+Also register with Eureka and use Config Client
+
+Add WebClient or Feign to call Product Service
+
+Feign Client:
+@FeignClient(name = "product-service")
+public interface ProductClient {
+    @GetMapping("/products/{id}")
+    Product getProductById(@PathVariable("id") Long id);
+}
+
+Inventory Controller:
+@RestController
+@RequestMapping("/inventory")
+public class InventoryController {
+    @Autowired
+    private ProductClient productClient;
+
+    @GetMapping("/product/{id}")
+    public ResponseEntity<String> checkStock(@PathVariable Long id) {
+        Product product = productClient.getProductById(id);
+        return ResponseEntity.ok("Product " + product.getName() + " has " + product.getQuantity() + " units.");
+    }
+}
+
+bootstrap.yml:
+spring:
+  application:
+    name: inventory-service
+  cloud:
+    config:
+      uri: http://localhost:8888
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
