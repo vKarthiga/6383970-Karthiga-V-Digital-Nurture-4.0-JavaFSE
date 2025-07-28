@@ -1,0 +1,68 @@
+CohortDetails.js
+import React from "react";
+import styles from "./CohortDetails.module.css";
+function CohortDetails(props) {
+  const { cohort } = props;
+  const statusStyle = {
+    color: cohort.status.toLowerCase() === "ongoing" ? "green" : "blue"
+  };
+  return (
+    <div className={styles.box}>
+      <h3 style={statusStyle}>{cohort.name}</h3>
+      <dl>
+        <dt>Trainer</dt>
+        <dd>{cohort.trainer}</dd>
+        <dt>Status</dt>
+        <dd>{cohort.status}</dd>
+        <dt>Participants</dt>
+        <dd>{cohort.participants}</dd>
+      </dl>
+    </div>
+  );
+}
+export default CohortDetails;
+
+App.js
+import React from "react";
+import CohortDetails from "./CohortDetails";
+
+function App() {
+  const cohorts = [
+    {
+      name: "React Bootcamp",
+      trainer: "Ravi",
+      status: "ongoing",
+      participants: 25
+    },
+    {
+      name: "Node.js Deep Dive",
+      trainer: "Anita",
+      status: "completed",
+      participants: 30
+    }
+  ];
+
+  return (
+    <div>
+      <h1>Cohort Dashboard</h1>
+      {cohorts.map((cohort, index) => (
+        <CohortDetails key={index} cohort={cohort} />
+      ))}
+    </div>
+  );
+}
+export default App;
+
+CohortDetails.module.css 
+.box {
+  width: 300px;
+  display: inline-block;
+  margin: 10px;
+  padding: 10px 20px;
+  border: 1px solid black;
+  border-radius: 10px;
+}
+
+dt {
+  font-weight: 500;
+}
