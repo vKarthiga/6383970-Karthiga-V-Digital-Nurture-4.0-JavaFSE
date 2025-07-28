@@ -1,0 +1,70 @@
+Guest.js
+import React from 'react';
+const Guest = () => {
+  return (
+    <div style={styles.container}>
+      <h2>Welcome, Guest!</h2>
+      <p>You can browse flight details here, but booking requires login.</p>
+    </div>
+  );
+};
+const styles = {
+  container: {
+    textAlign: 'center',
+    marginTop: '50px',
+  },
+};
+export default Guest;
+
+User.js
+import React from 'react';
+
+const User = () => {
+  return (
+    <div style={styles.container}>
+      <h2>Welcome, User!</h2>
+      <p>You can now book your flight tickets.</p>
+    </div>
+  );
+};
+
+const styles = {
+  container: {
+    textAlign: 'center',
+    marginTop: '50px',
+  },
+};
+
+export default User;
+
+App.js
+import React, { useState } from 'react';
+import Guest from './components/Guest';
+import User from './components/User';
+
+function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const handleLoginToggle = () => {
+    setIsLoggedIn(prev => !prev);
+  };
+  const buttonStyle = {
+    marginTop: '20px',
+    padding: '10px 20px',
+    backgroundColor: isLoggedIn ? 'tomato' : 'green',
+    color: 'white',
+    border: 'none',
+    cursor: 'pointer',
+    borderRadius: '8px'
+  };
+  return (
+    <div style={{ textAlign: 'center' }}>
+      <h1>Ticket Booking App</h1>
+      {isLoggedIn ? <User /> : <Guest />}
+      <button style={buttonStyle} onClick={handleLoginToggle}>
+        {isLoggedIn ? 'Logout' : 'Login'}
+      </button>
+    </div>
+  );
+}
+export default App;
