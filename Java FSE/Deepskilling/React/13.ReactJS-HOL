@@ -1,0 +1,109 @@
+BlogDetails.js
+import React from 'react';
+const BlogDetails = ({ blogs }) => {
+  return (
+    <div>
+      <h2>Blog Posts</h2>
+      <ul>
+        {blogs.map((blog) => (
+          <li key={blog.id}>
+            <strong>{blog.title}</strong> - {blog.content}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+export default BlogDetails;
+
+BookDetails.js
+import React from 'react';
+const BookDetails = ({ books }) => {
+  return (
+    <div>
+      <h2>Books List</h2>
+      <ul>
+        {books.map((book, index) => (
+          <li key={book.id}>
+            <strong>{book.title}</strong> by {book.author}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+export default BookDetails;
+
+CourseDetails.js
+import React from 'react';
+
+const CourseDetails = ({ courses }) => {
+  return (
+    <div>
+      <h2>Courses</h2>
+      <ul>
+        {courses.map((course) => (
+          <li key={course.id}>
+            <strong>{course.name}</strong> - {course.instructor}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+
+export default CourseDetails;
+
+App.js
+import React, { useState } from 'react';
+import BookDetails from './BookDetails';
+import BlogDetails from './BlogDetails';
+import CourseDetails from './CourseDetails';
+import './App.css';
+
+function App() {
+  const [view, setView] = useState('books');
+
+  const books = [
+    { id: 1, title: 'React Explained', author: 'Zac Gordon' },
+    { id: 2, title: 'Learning JavaScript', author: 'Ethan Brown' }
+  ];
+
+  const blogs = [
+    { id: 1, title: 'React Tips', content: 'Use hooks wisely' },
+    { id: 2, title: 'JavaScript Trends', content: 'ES2025 is here!' }
+  ];
+
+  const courses = [
+    { id: 1, name: 'React Basics', instructor: 'Alice' },
+    { id: 2, name: 'Advanced JS', instructor: 'Bob' }
+  ];
+  let content;
+  if (view === 'books') {
+    content = <BookDetails books={books} />;
+  } else if (view === 'blogs') {
+    content = <BlogDetails blogs={blogs} />;
+  } else {
+    content = <CourseDetails courses={courses} />;
+  }
+
+  return (
+    <div className="App">
+      <h1>Blogger App</h1>
+      <div className="nav">
+        <button onClick={() => setView('books')}>Books</button>
+        <button onClick={() => setView('blogs')}>Blogs</button>
+        <button onClick={() => setView('courses')}>Courses</button>
+      </div>
+
+      <hr />
+      {content}
+      {/* {view === 'books' ? <BookDetails books={books} /> : view === 'blogs' ? <BlogDetails blogs={blogs} /> : <CourseDetails courses={courses} />} */}
+      {/* {view === 'books' && <BookDetails books={books} />}
+      {view === 'blogs' && <BlogDetails blogs={blogs} />}
+      {view === 'courses' && <CourseDetails courses={courses} />} */}
+    </div>
+  );
+}
+
+export default App;
