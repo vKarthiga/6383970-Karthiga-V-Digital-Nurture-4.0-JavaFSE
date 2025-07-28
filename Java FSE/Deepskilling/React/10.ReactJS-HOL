@@ -1,0 +1,54 @@
+App.js
+import React from 'react';
+function App() {
+  const office = {
+    name: 'Indigo Workspace',
+    rent: 55000,
+    address: '123 Tech Park, Bengaluru',
+    image: 'https://via.placeholder.com/400x200.png?text=Office+Space'
+  };
+  const officeList = [
+    {
+      name: 'Indigo Workspace',
+      rent: 55000,
+      address: '123 Tech Park, Bengaluru',
+    },
+    {
+      name: 'GreenHub Office',
+      rent: 72000,
+      address: '45 Startup Lane, Chennai',
+    },
+    {
+      name: 'SkyView Workspaces',
+      rent: 60000,
+      address: '88 Business Bay, Hyderabad',
+    }
+  ];
+  const getRentStyle = (rent) => {
+    return {
+      color: rent > 60000 ? 'green' : 'red',
+      fontWeight: 'bold'
+    };
+  };
+
+  return (
+    <div style={{ padding: '20px', fontFamily: 'Arial' }}>
+      <h1>Office Space Rental App</h1>
+      <img src={office.image} alt="Office Space" style={{ width: '400px', height: '200px' }} />
+      <h2>{office.name}</h2>
+      <p style={getRentStyle(office.rent)}>Rent: ₹{office.rent}</p>
+      <p>Address: {office.address}</p>
+
+      <hr />
+      <h2>Available Office Spaces:</h2>
+      {officeList.map((item, index) => (
+        <div key={index} style={{ marginBottom: '20px' }}>
+          <h3>{item.name}</h3>
+          <p style={getRentStyle(item.rent)}>Rent: ₹{item.rent}</p>
+          <p>Address: {item.address}</p>
+        </div>
+      ))}
+    </div>
+  );
+}
+export default App;
