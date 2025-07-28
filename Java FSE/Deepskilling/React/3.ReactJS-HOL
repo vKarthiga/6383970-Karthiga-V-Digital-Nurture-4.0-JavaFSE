@@ -1,0 +1,37 @@
+CalculateScore.js
+import React from 'react';
+function CalculateScore(props) {
+  const { name, school, total, goal } = props;
+  const average = (total / goal).toFixed(2);
+
+  return (
+    <div className="score-card">
+      <h2>Student Score Calculator</h2>
+      <p><strong>Name:</strong> {name}</p>
+      <p><strong>School:</strong> {school}</p>
+      <p><strong>Total Marks:</strong> {total}</p>
+      <p><strong>Goal:</strong> {goal}</p>
+      <p className="highlight">Average Score: {average}</p>
+    </div>
+  );
+}
+export default CalculateScore;
+
+App.js
+import React from 'react';
+import './App.css';
+import CalculateScore from './Components/CalculateScore';
+
+function App() {
+  return (
+    <div className="App">
+      <CalculateScore 
+        name="John Doe" 
+        school="Green Valley High" 
+        total={450} 
+        goal={5} 
+      />
+    </div>
+  );
+}
+export default App;
