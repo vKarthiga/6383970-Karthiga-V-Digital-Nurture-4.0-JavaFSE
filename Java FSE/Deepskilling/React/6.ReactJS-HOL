@@ -1,0 +1,114 @@
+Trainer.js
+class Trainer {
+  constructor(trainerId, name, phone, email, stream, skills) {
+    this.trainerId = trainerId;
+    this.name = name;
+    this.phone = phone;
+    this.email = email;
+    this.stream = stream;
+    this.skills = skills;
+  }
+}
+
+export default Trainer;
+
+TrainersMock.js:
+import Trainer from './Trainer';
+
+const trainers = [
+  new Trainer(1, "Alice", "1234567890", "alice@example.com", "Java", ["Spring", "Hibernate"]),
+  new Trainer(2, "Bob", "9876543210", "bob@example.com", "Python", ["Django", "Flask"]),
+  new Trainer(3, "Charlie", "5555555555", "charlie@example.com", "React", ["Hooks", "Redux"]),
+];
+
+export default trainers;
+
+TrainersList.js
+import React from 'react';
+import { Link } from 'react-router-dom';
+
+function TrainersList({ data }) {
+  return (
+    <div>
+      <h2>Trainers List</h2>
+      <ul>
+        {data.map((trainer) => (
+          <li key={trainer.trainerId}>
+            <Link to={`/trainers/${trainer.trainerId}`}>{trainer.name}</Link>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+export default TrainersList;
+
+Home.js
+import React from 'react';
+
+function Home() {
+  return (
+    <div>
+      <h1>Welcome to Cognizant Academy</h1>
+      <p>This is a React SPA to manage trainer information.</p>
+    </div>
+  );
+}
+
+export default Home;
+
+TrainerDetails.js
+import React from 'react';
+import { useParams } from 'react-router-dom';
+import trainers from './TrainersMock';
+
+function TrainerDetail() {
+  const { id } = useParams();
+  const trainer = trainers.find(t => t.trainerId === parseInt(id));
+
+  if (!trainer) {
+    return <h2>Trainer not found</h2>;
+  }
+
+  return (
+    <div>
+      <h2>{trainer.name}'s Details</h2>
+      <p><strong>Phone:</strong> {trainer.phone}</p>
+      <p><strong>Email:</strong> {trainer.email}</p>
+      <p><strong>Stream:</strong> {trainer.stream}</p>
+      <p><strong>Skills:</strong> {trainer.skills.join(', ')}</p>
+    </div>
+  );
+}
+
+export default TrainerDetail;
+
+App.js
+import React from 'react';
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import Home from './Home';
+import TrainersList from './TrainersList';
+import TrainerDetail from './TrainerDetails';
+import trainers from './TrainersMock';
+
+function App() {
+  return (
+    <BrowserRouter>
+      <div>
+        <nav>
+          <Link to="/">Home</Link> |{" "}
+          <Link to="/trainers">Trainers</Link>
+        </nav>
+        <hr />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/trainers" element={<TrainersList data={trainers} />} />
+          <Route path="/trainers/:id" element={<TrainerDetail />} />
+        </Routes>
+      </div>
+    </BrowserRouter>
+  );
+}
+
+export default App;
