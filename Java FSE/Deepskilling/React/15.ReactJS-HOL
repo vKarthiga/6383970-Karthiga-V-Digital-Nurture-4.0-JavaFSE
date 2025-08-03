@@ -1,0 +1,88 @@
+ComplaintRegister.js
+import React from 'react';
+
+class ComplaintRegister extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      empName: '',
+      complaint: ''
+    };
+  }
+
+  handleChange = (event) => {
+    const { name, value } = event.target;
+    this.setState({ [name]: value });
+  };
+
+  handleSubmit = (event) => {
+    event.preventDefault();
+    const referenceNumber = Math.floor(100000 + Math.random() * 900000);
+    alert(`Complaint registered successfully!\nRef No: ${referenceNumber}`);
+    // Reset form
+    this.setState({ empName: '', complaint: '' });
+  };
+
+  render() {
+    return (
+      <div>
+        <h2>Raise a Complaint</h2>
+        <form onSubmit={this.handleSubmit}>
+          <div>
+            <label>Employee Name: </label>
+            <input
+              type="text"
+              name="empName"
+              value={this.state.empName}
+              onChange={this.handleChange}
+              required
+            />
+          </div>
+          <div>
+            <label>Complaint: </label>
+            <br />
+            <textarea
+              name="complaint"
+              value={this.state.complaint}
+              onChange={this.handleChange}
+              rows="5"
+              cols="40"
+              required
+            ></textarea>
+          </div>
+          <br />
+          <button type="submit">Submit Complaint</button>
+        </form>
+      </div>
+    );
+  }
+}
+
+export default ComplaintRegister;
+
+
+App.js
+import React from 'react';
+import ComplaintRegister from './ComplaintRegister';
+
+function App() {
+  return (
+    <div className="App">
+      <ComplaintRegister />
+    </div>
+  );
+}
+
+export default App;
+
+index.js
+import React from 'react';
+import ReactDOM from 'react-dom';
+import App from './App';
+
+ReactDOM.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+  document.getElementById('root')
+);
