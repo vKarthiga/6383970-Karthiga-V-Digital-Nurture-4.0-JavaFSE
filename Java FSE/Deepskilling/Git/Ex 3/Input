@@ -1,0 +1,20 @@
+cd GitDemo
+Create a new branch called GitNewBranch:
+git branch GitNewBranch
+git branch -a
+git checkout -b GitNewBranch
+echo "This is a file in GitNewBranch" > newfile.txt
+Stage and commit the file:
+git add newfile.txt
+git commit -m "Add feature.txt in GitNewBranch"
+Check branch status:
+git status
+git checkout main
+ Check differences between master and GitNewBranch
+git diff master..GitNewBranch
+Merge GitNewBranch into master:
+git merge GitNewBranch
+git log --oneline --graph --decorate
+Delete the merged branch
+git branch -d GitNewBranch
+git status
