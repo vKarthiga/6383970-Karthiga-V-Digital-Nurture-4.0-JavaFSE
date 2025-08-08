@@ -1,0 +1,11 @@
+cd ~/GitDemo
+touch error.log
+mkdir log
+touch logs/app.log
+git status
+Add and commit only .gitignore:
+git add .gitignore
+touch .gitignore
+vi .gitignore
+ls -a
+git push origin main
