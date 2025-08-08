@@ -1,0 +1,20 @@
+1. Create project folder and initialize Git:
+mkdir GitDemo
+cd GitDemo
+git init
+2. Verify Git repo is initialized:
+ls -a
+3. Create and edit a file in terminal(none):
+welcome.txt
+4. Check the file exists:
+ls
+5. View the content:
+cat welcome.txt
+6. Check Git status:
+git status
+7. Stage the file:
+git add welcome.txt
+8. Commit with multiline message:
+git commit
+9. Confirm file is committed:
+git status
