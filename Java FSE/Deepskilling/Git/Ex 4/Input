@@ -1,0 +1,24 @@
+git add hello.xml
+git commit -m "GitWork: Added hello.xml with content"
+git checkout main
+Add a file hello.xml and update its content:
+echo "<message>Hello from master GitWork branch</message>" > hello.xml
+Stage and commit the file:
+git add hello.xml
+git commit -m "Master: Added hello.xml with different content"
+View logs in graph format:
+git log --oneline --graph --decorate –all
+Check differences using CLI tool:
+git diff GitWork hello.xml
+Merge GitWork into master:
+git merge GitWork
+cat hello.xml
+nano hello.xml
+Commit after resolving conflict:
+git add hello.xml
+git commit -m "Resolved merge conflict in hello.xml"
+git status
+echo "*.orig" >> .gitignore
+git add .gitignore
+git commit -m "Ignore backup files"
+git branch
